@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -53,22 +54,35 @@ public class UEAController {
         return "listUEA";
     }
 
-    @GetMapping("/EditarUEA")
-    public String EditarUEA(){
-        return "UEA";
-    }
+    @GetMapping("/EditarUEA/{ClaveUEA}")
+    public String EditarUEA(@PathVariable("ClaveUEA") String clave, Model model){
+        
+        UEA uea = ueaDAOImplementation.GetByClave(clave);
+        
+        List<Unidad>unidades = unidadDAOImplementation.GetAll();
+        model.addAttribute("unidades",unidades);
 
-    @GetMapping("/EliminarUEA")
-    public String EliminarUEA(Model model){
-        UEA uea = new UEA();
+        List<Tronco>troncos = troncoDAOImplementation.GetAll();
+        model.addAttribute("troncos",troncos);
+
+        List<Trimestre>trimestres = trimestreDAOImplementation.GetAll();
+        model.addAttribute("trimestres",trimestres);
+        
         model.addAttribute("uea", uea);
-        return "deleteUEA";
+        
+        return "form";
+    }
+    
+    @PostMapping("/EditarUEA/{ClaveUEA}")
+    public String EditarUEA(@ModelAttribute("uea") UEA uea){
+        ueaDAOImplementation.Edit(uea);
+        return "redirect:/UEA/ListadoUEA";
     }
 
-    @PostMapping("/EliminarUEA")
-    public String EliminarUEA(@ModelAttribute("clave") String clave){
+    @GetMapping("/EliminarUEA/{ClaveUEA}")
+    public String EliminarUEA(@PathVariable("ClaveUEA") String clave){
         ueaDAOImplementation.Delete(clave);
-        return "deleteUEA";
+        return "redirect:/UEA/ListadoUEA";
     }
 
     @GetMapping("/AgregarUEA")

@@ -60,8 +60,33 @@ public class UeaDAOImplementation implements UeaDAO{
 
     @Override
     @Transactional
-    public void Edit(String clave, UEA uea) {
+    public void Edit(UEA uea) {
+        try {
+            TypedQuery<UEA> queryUEA = entityManager.createQuery("FROM UEA WHERE Clave = :clave", UEA.class);
+        queryUEA.setParameter("clave", uea.getClave());
+        UEA ueaBD = queryUEA.getSingleResult();
+        
+        ueaBD.setNombre(uea.getNombre());
+        ueaBD.setCreditos(uea.getCreditos());
+        ueaBD.setTrimestre(uea.getTrimestre());
+        ueaBD.setUnidad(uea.getUnidad());
+        ueaBD.setTronco(uea.getTronco());
+        
+        } catch (Exception e) {
+            e.getLocalizedMessage();
+        }
 
+    }
+    
+    @Override
+    public UEA GetByClave(String clave){
+        UEA uea = new UEA();
+        try {
+            uea = entityManager.find(UEA.class, clave);
+        } catch (Exception e) {
+            e.getLocalizedMessage();
+        }
+        return uea;
     }
 
 }
